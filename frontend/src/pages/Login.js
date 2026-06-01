@@ -12,11 +12,13 @@ export default function Login() {
   const [showPw, setShowPw] = useState(false);
   const [apiError, setApiError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
 
   const {
     register,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -29,11 +31,12 @@ export default function Login() {
     setApiError('');
     setLoading(true);
     try {
-      // Make real POST request to backend server for validation and secure JWT generation
-      const res = await api.post('/auth/login', {
-        email: data.email,
-        password: data.password,
-      });
+      const endpoint = isLogin ? '/auth/login' : '/auth/register';
+      const payload = isLogin
+        ? { email: data.email, password: data.password }
+        : { name: data.name, email: data.email, password: data.password };
+
+      const res = await api.post(endpoint, payload);
       if (res && res.token) {
         login({ ...res.user, token: res.token });
         navigate('/dashboard');
@@ -98,15 +101,26 @@ export default function Login() {
           }}
           className="fade-in"
         >
-          <h2 style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>Sign in</h2>
+          <h2 style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>
+            {isLogin ? 'Sign in' : 'Create an account'}
+          </h2>
           <p style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 20 }}>
-            Continue reviewing candidates
+            {isLogin ? 'Continue reviewing candidates' : 'Start reviewing candidates'}
           </p>
 
           <form
             onSubmit={handleSubmit(onSubmit)}
             style={{ display: 'flex', flexDirection: 'column', gap: 14 }}
           >
+            {!isLogin && (
+              <Input
+                label="Full name"
+                type="text"
+                placeholder="Jane Doe"
+                error={errors.name?.message}
+                {...register('name', { required: !isLogin ? 'Name is required' : false })}
+              />
+            )}
             <Input
               label="Work email"
               type="email"
@@ -168,8 +182,29 @@ export default function Login() {
             )}
 
             <Button type="submit" loading={loading} style={{ width: '100%', justifyContent: 'center' }}>
-              Sign in
+              {isLogin ? 'Sign in' : 'Sign up'}
             </Button>
+
+            <div style={{ textAlign: 'center', marginTop: 8 }}>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                  setApiError('');
+                  reset();
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-2)',
+                  fontSize: 12,
+                  cursor: 'pointer',
+                  textDecoration: 'underline'
+                }}
+              >
+                {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+              </button>
+            </div>
           </form>
         </div>
 

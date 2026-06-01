@@ -3,8 +3,8 @@ import axios from 'axios';
 const BASE = process.env.REACT_APP_API_URL || 'http://localhost:4000/api';
 
 const api = axios.create({
-  baseURL: BASE,
-  timeout: 15000,
+  baseURL: BASE + '/api',
+  timeout: 80000,
 });
 
 api.interceptors.request.use((config) => {
