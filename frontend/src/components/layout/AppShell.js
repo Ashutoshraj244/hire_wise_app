@@ -14,6 +14,8 @@ import {
   Plus,
   Moon,
   Sun,
+  Github,
+  Linkedin,
 } from 'lucide-react';
 import { useAuth } from '../../lib/auth';
 import api from '../../lib/api';
@@ -389,6 +391,41 @@ export default function AppShell({ children }) {
         </div>
 
 
+
+        {/* Social Links */}
+        <div
+          style={{
+            padding: '10px 12px',
+            borderTop: '1px solid var(--border)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 16,
+          }}
+        >
+          <a
+            href="https://github.com/Ashutoshraj244"
+            target="_blank"
+            rel="noreferrer"
+            title="GitHub Profile"
+            style={{ color: 'var(--text-3)', transition: 'color 0.2s', display: 'flex' }}
+            onMouseOver={(e) => e.currentTarget.style.color = 'var(--text)'}
+            onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-3)'}
+          >
+            <Github size={16} />
+          </a>
+          <a
+            href="https://www.linkedin.com/in/ashutoshraj244"
+            target="_blank"
+            rel="noreferrer"
+            title="LinkedIn Profile"
+            style={{ color: 'var(--text-3)', transition: 'color 0.2s', display: 'flex' }}
+            onMouseOver={(e) => e.currentTarget.style.color = '#0077b5'}
+            onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-3)'}
+          >
+            <Linkedin size={16} />
+          </a>
+        </div>
 
         {/* User */}
         <div

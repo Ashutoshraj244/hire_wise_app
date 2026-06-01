@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { Briefcase, Eye, EyeOff } from 'lucide-react';
+import { Briefcase, Eye, EyeOff, Github, Linkedin } from 'lucide-react';
 import { useAuth } from '../lib/auth';
 import api from '../lib/api';
 import { Button, Input } from '../components/ui';
@@ -51,8 +51,13 @@ export default function Login() {
   return (
     <div
       style={{
+        position: 'relative',
         minHeight: '100vh',
-        background: 'var(--bg)',
+        backgroundColor: 'var(--bg)',
+        backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url("/background.png")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -75,7 +80,7 @@ export default function Login() {
           >
             <Briefcase size={14} color="var(--bg-panel)" strokeWidth={2.5} />
           </div>
-          <span style={{ fontWeight: 600, fontSize: 15, letterSpacing: '-0.01em' }}>
+          <span style={{ fontWeight: 600, fontSize: 20, letterSpacing: '-0.01em', color: 'var(--text)' }}>
             HireWise
           </span>
         </div>
@@ -83,9 +88,11 @@ export default function Login() {
         {/* Card */}
         <div
           style={{
-            background: 'var(--bg-panel)',
+            background: 'color-mix(in srgb, var(--bg-panel) 90%, transparent)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
             border: '1px solid var(--border)',
-            borderRadius: 8,
+            borderRadius: 12,
             padding: 24,
             boxShadow: 'var(--shadow)',
           }}
@@ -171,10 +178,13 @@ export default function Login() {
           style={{
             marginTop: 12,
             padding: '10px 14px',
-            background: 'var(--accent-light)',
+            background: 'color-mix(in srgb, var(--bg-panel) 90%, transparent)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
             border: '1px solid color-mix(in srgb, var(--accent) 30%, transparent)',
-            borderRadius: 6,
+            borderRadius: 12,
             fontSize: 12,
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
           }}
         >
           <p style={{ color: 'var(--accent)', fontWeight: 500, marginBottom: 4 }}>Demo account</p>
@@ -199,6 +209,86 @@ export default function Login() {
             Fill credentials
           </button>
         </div>
+      </div>
+
+      {/* Social Links */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 24,
+          right: 24,
+          display: 'flex',
+          gap: 12,
+        }}
+      >
+        <a
+          href="https://github.com/Ashutoshraj244"
+          target="_blank"
+          rel="noreferrer"
+          title="GitHub Profile"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 44,
+            height: 44,
+            borderRadius: '50%',
+            background: 'color-mix(in srgb, var(--bg-panel) 80%, transparent)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            border: '1px solid color-mix(in srgb, var(--border) 60%, transparent)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+            color: 'var(--text)',
+            transition: 'all 0.2s',
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.background = 'var(--bg-panel)';
+            e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.15)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.background = 'color-mix(in srgb, var(--bg-panel) 80%, transparent)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+          }}
+        >
+          <Github size={20} />
+        </a>
+        <a
+          href="https://www.linkedin.com/in/ashutoshraj244"
+          target="_blank"
+          rel="noreferrer"
+          title="LinkedIn Profile"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 44,
+            height: 44,
+            borderRadius: '50%',
+            background: 'color-mix(in srgb, var(--bg-panel) 80%, transparent)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            border: '1px solid color-mix(in srgb, var(--border) 60%, transparent)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+            color: 'var(--text)',
+            transition: 'all 0.2s',
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.background = 'var(--bg-panel)';
+            e.currentTarget.style.color = '#0077b5';
+            e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.15)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.background = 'color-mix(in srgb, var(--bg-panel) 80%, transparent)';
+            e.currentTarget.style.color = 'var(--text)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+          }}
+        >
+          <Linkedin size={20} />
+        </a>
       </div>
     </div>
   );
