@@ -1,154 +1,76 @@
-# HireWise — Resume Screening Tool
+# HireWise - AI-Powered Automated Resume Screening Platform
 
-An internal recruiter tool for uploading resumes, scoring them against a job description, and ranking candidates. Built as a full-stack project using React, Express, and MongoDB.
+## Project Overview
+**HireWise** is a full-stack, AI-powered web application designed to streamline the recruitment process. It serves as an internal tool allowing HR professionals and recruiters to upload a job description alongside a batch of candidate resumes (PDF, DOC, DOCX) and automatically extracts, analyzes, and ranks the candidates.
 
----
-
-## What it does
-
-1. Recruiter logs in
-2. Creates a screening session with a job description
-3. Uploads multiple resumes (PDF, DOC, DOCX)
-4. The backend parses each resume and scores it against the JD
-5. Candidates are ranked by match score and displayed in a sortable table
-6. Recruiter can shortlist, reject, and add notes
-7. Export shortlisted candidates as CSV
+### Objective
+To reduce manual effort in reviewing hundreds of resumes by providing an automated, unbiased, and highly customizable screening pipeline that scores candidates in real-time.
 
 ---
 
-## Architecture
-
-```
-hirewise-app/
-├── frontend/        # React SPA (CRA)
-│   └── src/
-│       ├── pages/           # Login, Dashboard, Upload, Results
-│       ├── components/
-│       │   ├── layout/      # AppShell sidebar + PageHeader
-│       │   ├── ui/          # Button, Badge, ScoreBadge, etc.
-│       │   └── screening/   # CandidateDrawer
-│       ├── lib/             # scorer.js, api.js, auth.js (context)
-│       └── data/            # seed.js (demo candidates + sessions)
-│
-└── backend/         # Node.js + Express
-    └── src/
-        ├── modules/
-        │   ├── auth/        # JWT login/register
-        │   ├── resumes/     # Upload + parse (pdf-parse, mammoth)
-        │   ├── jobs/        # Job description CRUD
-        │   ├── screening/   # Session management + trigger scoring
-        │   └── candidates/  # Candidate CRUD, shortlist, notes, export
-        ├── lib/
-        │   └── scorer.js    # Scoring engine
-        ├── middleware/       # Auth (JWT), error handler
-        └── database/        # connect.js, seed.js
-```
+## Key Features & Workflow
+* **Recruiter Workflow**: The recruiter logs in, creates a screening session with a job description, and uploads multiple resumes.
+* **Automated Parsing**: Uses NLP techniques via `pdf-parse` and `mammoth` to extract text from candidate resumes on the backend.
+* **Intelligent Scoring Engine**: Compares extracted candidate data against the required Job Description (JD) and ranks candidates by match score.
+* **Calibratable Weights**: Recruiters can dynamically adjust the importance of Technical Skills, Experience, Education, and Keywords, with instant ranking updates.
+* **Candidate Management**:
+   * Manually inject candidate profiles or edit existing ones.
+   * Shortlist, reject, and leave private notes on specific candidates.
+   * "One-click Email" integration for shortlisted candidates.
+* **Premium UI/UX**: Features a polished, responsive interface with a system-wide Dark Mode, built using raw CSS variables (`color-mix` for auto-theming).
+* **Data Export**: Easily export the screened/shortlisted candidate list to CSV or Excel.
 
 ---
 
-## Scoring logic
-
+## Intelligent Scoring Logic
 Each resume is scored against the job description using four weighted factors:
 
-| Factor | Weight | How it's calculated |
+| Factor | Weight | Calculation Method |
 |---|---|---|
-| Skills match | 50% | Matched skills ÷ total required skills in JD |
-| Experience | 25% | Compares extracted years vs JD requirement |
-| Education | 15% | Tiered: PhD > Master's > Bachelor's > Associate |
-| Keyword similarity | 10% | Jaccard similarity between resume tokens and JD tokens |
+| **Skills match** | 50% | Matched skills ÷ total required skills in JD |
+| **Experience** | 25% | Compares extracted years vs JD requirement |
+| **Education** | 15% | Tiered: PhD > Master's > Bachelor's > Associate |
+| **Keyword similarity** | 10% | Jaccard similarity between resume tokens and JD tokens |
 
 **Final score** = (skills × 0.5) + (experience × 0.25) + (education × 0.15) + (keyword × 0.1)
 
-Scores are capped at 99 and floored at 5. A resume missing key skills like React/TypeScript for a frontend role will visibly score lower.
+Scores are capped at 99 and floored at 5.
 
 ---
 
-## Local setup
-
-### Requirements
-
-- Node.js 18+
-- MongoDB (local or Atlas)
+## Technology Stack
+### Frontend
+* **Framework**: React.js (Single Page Application)
+* **Routing & State**: React Router DOM, Context API & Session Storage
+* **Styling**: Vanilla CSS with dynamic CSS Variables
+* **Icons & Export**: Lucide React, PapaParse (CSV), SheetJS/XLSX (Excel)
 
 ### Backend
-
-```bash
-cd backend
-cp .env.example .env
-# Edit .env — set MONGO_URI and JWT_SECRET
-npm install
-node src/database/seed.js   # seed demo data
-npm run dev
-```
-
-### Frontend
-
-```bash
-cd frontend
-cp .env.example .env
-npm install
-npm start
-```
-
-Open `http://localhost:3000` and sign in with:
-- Email: `sarah.chen@acme.co`
-- Password: `demo1234`
+* **Runtime & Framework**: Node.js with Express.js
+* **Database**: MongoDB (via Mongoose ORM)
+* **Authentication**: JWT (JSON Web Tokens) & bcrypt
+* **File Uploads & Parsing**: Multer, `pdf-parse` (PDFs), `mammoth` (Word docs)
 
 ---
 
-## Environment variables
+## System Architecture
+1. **Client Tier (Frontend)**: The user logs into the dashboard, creates a pipeline, and uploads files, which are sent to the backend as `multipart/form-data`.
+2. **Application Tier (Backend API)**: Express receives files via Multer. The parsing engine extracts raw text and uses Regex/Heuristics to identify candidate details (names, emails, phones, experience, skills). The scoring engine then calculates the match percentage.
+3. **Data Tier (MongoDB)**: Parsed candidates, session data, and job descriptions are stored persistently in MongoDB Atlas. Original files are not stored on disk; only extracted text is saved.
 
-### Backend (`backend/.env`)
-
-| Variable | Description |
-|---|---|
-| `PORT` | API port (default: 4000) |
-| `MONGO_URI` | MongoDB connection string |
-| `JWT_SECRET` | Secret for signing JWTs — change this |
-| `CLIENT_URL` | Frontend URL for CORS |
-| `NODE_ENV` | `development` or `production` |
-
-### Frontend (`frontend/.env`)
-
-| Variable | Description |
-|---|---|
-| `REACT_APP_API_URL` | Backend API base URL |
-
----
-
-## Deployment
-
-**Frontend → Vercel**
-- Connect the `/frontend` directory
-- Set `REACT_APP_API_URL` to your Render backend URL
-
-**Backend → Render**
-- Connect the `/backend` directory
-- Set all env vars in Render's dashboard
-- Use MongoDB Atlas for the database
-
----
-
-## Tradeoffs made
-
-- **Frontend demo mode**: The frontend works standalone using seed data so it can be demoed without the backend running. The real backend integration is wired up via `api.js` — just set `REACT_APP_API_URL`.
-
-- **Browser PDF parsing**: PDFs uploaded via the browser can't be parsed as text (they're binary). This is expected — in production, all file parsing happens server-side via `pdf-parse`. The frontend shows a helpful message for this.
-
-- **No real-time updates**: Scoring runs synchronously in the `/screening/:id/run` endpoint. For large batches (50+ resumes), this should be moved to a background queue (BullMQ, etc.).
-
-- **Skill extraction is keyword-based**: The scorer uses a hardcoded list of ~40 tech skills. It works well for software roles but would need expansion or an NLP model for broader hiring use cases.
-
-- **No file storage**: Resume files aren't persisted to disk or S3 — only extracted text is stored in MongoDB. Add multer-s3 or similar if you need to store originals.
-
----
-
-## Potential improvements
-
-- Background job queue for large resume batches
-- OpenAI/Claude API integration for richer candidate summaries
-- Multi-user support with organization accounts
-- Email notifications when shortlist changes
-- Bulk reject / bulk shortlist actions
-- Resume file storage (S3)
-- More granular skill taxonomy per job category
+### Folder Structure
+```text
+hirewise-app/
+├── frontend/        # React SPA
+│   └── src/
+│       ├── components/     # Reusable UI (AppShell, Buttons, CandidateDrawer)
+│       ├── data/           # Mock demo seed data
+│       ├── lib/            # Axios API config, Auth Context, scorer.js
+│       ├── pages/          # Full page views (Login, Dashboard, Upload, Results)
+│       └── index.css       # Global styles and Dark Mode variables
+└── backend/         # Node.js + Express
+    └── src/
+        ├── modules/        # Domain-specific logic (auth, resumes, jobs, screening, candidates)
+        ├── lib/            # Scoring engine
+        ├── middleware/     # JWT verification, Multer, error handler
+        └── database/       # Mongoose models, connection, and seed script
