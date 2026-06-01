@@ -32,7 +32,7 @@ app.get('/health', (_, res) => res.json({ status: 'ok', ts: new Date() }));
 app.use(errorHandler);
 
 connectDB().then(() => {
-  app.listen(PORT, () => console.log(`API running on :${PORT}`));
+  app.listen(PORT, "0.0.0.0" , () => console.log(`API running on :${PORT}`));
 }).catch((err) => {
   console.error('DB connection failed:', err.message);
   process.exit(1);
